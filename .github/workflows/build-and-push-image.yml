@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - master
+name: Build And Push Image
+
+jobs:
+  build-and-push-image:
+    name: Build And Push Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: docker login -u "${{ secrets.CI_DOCKER_USER }}" -p "${{ secrets.CI_DOCKER_PASSWORD }}"
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.QUEUE_TESTER_BACKEND_IMAGE_NAME }}:latest .
+          docker images
+
+      - name: Push Docker Image
+        run: docker push ${{ secrets.QUEUE_TESTER_BACKEND_IMAGE_NAME }}:latest
